@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  course_id: 1
+  completed: false
+  favorite: false
+
+two:
+  user: two
+  course_id: 1
+  completed: false
+  favorite: false
