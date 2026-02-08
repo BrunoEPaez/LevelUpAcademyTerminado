@@ -1,8 +1,8 @@
 Rails.application.routes.draw do
-  # 1. RUTA RAÍZ (Obligatoria para que el deploy de Render no falle)
-  # Si tienes un controlador de cursos, podrías usar "api/courses#index" 
-  # o simplemente una respuesta básica de salud (Health Check).
-  root to: "jobs#index" 
+  # 1. RUTA RAÍZ
+  # Esta ruta es vital para que Render confirme que la app está online.
+  # Apuntamos a la lista de cursos del API como página de inicio por defecto.
+  root to: "api/courses#index"
 
   # --- Rutas heredadas de la base de empleos ---
   resources :jobs
@@ -40,5 +40,6 @@ Rails.application.routes.draw do
   end
 
   # Devise para el modelo User
+  # Se mantienen los skips para manejar las sesiones vía API (JWT o similar)
   devise_for :users, skip: [:sessions, :registrations]
 end
