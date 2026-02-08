@@ -18,4 +18,4 @@ COPY . .
 EXPOSE 3000
 
 # Comando para iniciar el servidor usando la variable de entorno PORT
-CMD ["rails", "server", "-b", "0.0.0.0"]
+CMD ["sh", "-c", "bundle exec rails server -b 0.0.0.0 -p ${PORT:-3000}"]
