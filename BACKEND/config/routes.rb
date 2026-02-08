@@ -1,4 +1,9 @@
 Rails.application.routes.draw do
+  # 1. RUTA RAÍZ (Obligatoria para que el deploy de Render no falle)
+  # Si tienes un controlador de cursos, podrías usar "api/courses#index" 
+  # o simplemente una respuesta básica de salud (Health Check).
+  root to: "jobs#index" 
+
   # --- Rutas heredadas de la base de empleos ---
   resources :jobs
   resources :favorites, only: [:index, :create]
@@ -34,6 +39,6 @@ Rails.application.routes.draw do
     get 'my_progress', to: 'progresses#index'
   end
 
-  # Devise para el modelo User (necesario para el funcionamiento interno)
+  # Devise para el modelo User
   devise_for :users, skip: [:sessions, :registrations]
 end
