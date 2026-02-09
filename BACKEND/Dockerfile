@@ -20,4 +20,5 @@ EXPOSE 3000
 # Comando para iniciar el servidor usando la variable de entorno PORT
 
 # Cambia la última línea (el CMD) por esto:
+# En la última línea de tu Dockerfile
 CMD ["sh", "-xc", "bundle exec rake db:migrate && bundle exec rake db:seed && bundle exec puma -C config/puma.rb"]
