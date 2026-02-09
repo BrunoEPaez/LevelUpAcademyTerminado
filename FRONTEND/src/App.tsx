@@ -264,7 +264,7 @@ useEffect(() => {
         { course_id: course.id, action_type: 'favorite' }, // Enviamos action_type para que el backend sepa qué hacer
         { headers: { Authorization: `Bearer ${token}` } }
       );
-    } catch () {
+    } catch {
       console.error("Error al guardar favorito");
     }
   };
