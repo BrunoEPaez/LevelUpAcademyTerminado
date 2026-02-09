@@ -1,33 +1,37 @@
 # db/seeds.rb
 puts "Iniciando limpieza de base de datos..."
 
-# Usamos SQL puro para limpiar tablas y evitar errores si 'enrollments' no existe en el modelo
+# Limpieza segura de tablas para evitar errores de claves foráneas
 begin
-  ActiveRecord::Base.connection.execute("TRUNCATE courses, paths, lessons CASCADE")
+  # Intentamos eliminar en orden de dependencia
+  Lesson.destroy_all
+  Course.destroy_all
+  # Para Path, usamos delete_all para evitar problemas si no tiene dependencias configuradas
+  Path.connection.execute("TRUNCATE paths RESTART IDENTITY CASCADE") if defined?(Path)
   puts "Tablas limpiadas con éxito."
 rescue => e
-  puts "Aviso: No se pudo realizar el truncate (quizás las tablas aún no existen): #{e.message}"
+  puts "Aviso durante la limpieza: #{e.message}"
 end
 
 # 1. Creamos el Path por defecto
-# Usamos find_or_create_by para evitar duplicados si el script se corre varias veces
+# Es vital que tenga el ID: 1 para que los cursos se enganchen correctamente
 default_path = Path.find_or_create_by!(id: 1) do |p|
-  p.title = "Camino Principal"
+  p.title = "Camino Principal de Aprendizaje"
 end
 
-# 2. Definición del método para agregar cursos y sus lecciones
+# 2. Método para agregar cursos y crear su lección automáticamente
 def add_course(category, title, author, url, path_id)
   # Extraer el ID del video de YouTube de forma segura
   begin
     video_id = url.split('v=').last.split('&').first
   rescue
-    video_id = "dQw4w9WgXcQ" # Video por defecto si falla la URL
+    video_id = "dQw4w9WgXcQ" # Rickroll de emergencia si la URL está mal
   end
 
   # Crear el curso
   course = Course.create!(
     title: title,
-    description: "Curso completo de #{title} dictado por #{author}. Disponible en YouTube.",
+    description: "Curso completo de #{title} dictado por #{author}. Disponible gratuitamente en YouTube a través de nuestra plataforma.",
     thumbnail_url: "https://img.youtube.com/vi/#{video_id}/maxresdefault.jpg",
     youtube_id: video_id,
     category: category,
@@ -35,17 +39,18 @@ def add_course(category, title, author, url, path_id)
     path_id: path_id
   )
 
-  # IMPORTANTE: Crear la lección vinculada. 
-  # Esto arregla el Error 500 en /api/progress y permite que cada curso tenga su video.
+  # CREAR LA LECCIÓN (Esto es lo que arregla tus rutas)
+  # Sin una lección, la ruta /courses/:id/lessons/:id no tiene nada que mostrar
   Lesson.create!(
     course_id: course.id,
     youtube_id: video_id,
     title: "Clase Completa: #{title}",
+    description: "Contenido audiovisual del curso #{title}.",
     position: 1
   )
 end
 
-puts "Cargando cursos masivos por categorías..."
+puts "Cargando cursos por categorías..."
 
 # --- DESARROLLO WEB ---
 add_course('Desarrollo web', 'HTML y CSS desde CERO', 'Soy Dalto', 'https://www.youtube.com/watch?v=ELSm-G201Ls', default_path.id)
@@ -188,4 +193,4 @@ add_course('Herramientas', 'AFFINITY', 'Yoney Gallardo', 'https://www.youtube.co
 add_course('Herramientas', 'VEGAS PRO 23', 'Yoney Gallardo', 'https://www.youtube.com/watch?v=FhpoizYeZps', default_path.id)
 add_course('Fundamentos', 'Diseño de Videojuegos', 'Ingennus', 'https://www.youtube.com/watch?v=dOpvnqcsN4k', default_path.id)
 
-puts "¡Proceso finalizado! Se han cargado #{Course.count} cursos y sus lecciones."
+puts "¡Proceso finalizado! Se han cargado #{Course.count} cursos y #{Lesson.count} lecciones."
