@@ -7,7 +7,7 @@ export const CoursesPage: React.FC = () => {
 
   useEffect(() => {
     // IMPORTANTE: Asegúrate de que tu Rails esté corriendo en el puerto 3000
-    fetch('http://localhost:3000/api/courses')
+    fetch('https://levelupacademyterminado.onrender.com/api/courses')
       .then((res) => res.json())
       .then((data) => {
         setCourses(data);

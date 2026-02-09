@@ -59,7 +59,7 @@ const [selectedRoute, setSelectedRoute] = useState<any>(() => {
 
   if (token) {
     try {
-      await axios.post('http://localhost:3000/api/progress', 
+      await axios.post('http://levelupacademyterminado.onrender.com/api/progress', 
         { course_id: courseId }, 
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -72,7 +72,7 @@ const [selectedRoute, setSelectedRoute] = useState<any>(() => {
   // Función para seleccionar curso cargando sus datos reales de la API
 const handleSelectCourse = async (course: any) => {
   try {
-    const res = await axios.get(`http://localhost:3000/api/courses/${course.id}`);
+    const res = await axios.get(`https://levelupacademyterminado.onrender.com/api/courses/${course.id}`);
     // Esto trae el curso CON las lecciones y sus youtube_id
     setSelectedCourse(res.data);
     localStorage.setItem('selectedCourse', JSON.stringify(res.data));
@@ -116,7 +116,7 @@ useEffect(() => {
 useEffect(() => {
   if (token) {
     // Cargar cursos completados desde el backend
-    axios.get('http://localhost:3000/api/progress', {
+    axios.get('https://levelupacademyterminado.onrender.com/api/progress', {
       headers: { Authorization: `Bearer ${token}` }
     })
     .then(res => {
@@ -161,7 +161,7 @@ useEffect(() => {
 
   const handleLogin = async (credentials: any) => {
   try {
-    const res = await axios.post('http://localhost:3000/api/login', { user: credentials });
+    const res = await axios.post('https://levelupacademyterminado.onrender.com/api/login', { user: credentials });
     const authToken = res.data.token;
     
     // MEJORA: Si user.name es nulo, sacamos el nombre del email (emmanuel)
@@ -187,7 +187,7 @@ useEffect(() => {
 };
   const handleRegister = async (userData: any) => {
     try {
-      await axios.post('http://localhost:3000/api/register', { user: userData });
+      await axios.post('https://levelupacademyterminado.onrender.com/api/register', { user: userData });
       alert("¡Cuenta creada con éxito!");
       navigateTo('login');
     } catch (err: any) {
@@ -229,11 +229,11 @@ useEffect(() => {
   const fetchData = async () => {
     const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
     try {
-      const resCourses = await axios.get('http://localhost:3000/api/courses', config);
+      const resCourses = await axios.get('https://levelupacademyterminado.onrender.com/api/courses', config);
       setCourses(resCourses.data);
 
       if (token) {
-        const resProgress = await axios.get('http://localhost:3000/api/progress', config);
+        const resProgress = await axios.get('https://levelupacademyterminado.onrender.com/api/progress', config);
         if (resProgress.data.completedCourseIds) setCompleted(resProgress.data.completedCourseIds);
         if (resProgress.data.favoriteIds) setFavorites(resProgress.data.favoriteIds);
       }
@@ -260,7 +260,7 @@ useEffect(() => {
 
     // 2. Guardar en Backend
     try {
-      await axios.post('http://localhost:3000/api/progress', 
+      await axios.post('https://levelupacademyterminado.onrender.com/api/progress', 
         { course_id: course.id, action_type: 'favorite' }, // Enviamos action_type para que el backend sepa qué hacer
         { headers: { Authorization: `Bearer ${token}` } }
       );
