@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ACADEMY_DATA } from '../data/routesData';
 
 export const CategoriesPage = ({ completed, navigateTo, setSelectedRoute }: any) => {
@@ -33,7 +33,7 @@ export const CategoriesPage = ({ completed, navigateTo, setSelectedRoute }: any)
   gap: '20px' 
 }}>
   {subRoutes.map(route => {
-    const done = route.courseIds.filter(id => completed.includes(id)).length;
+    const done = route.courseIds.filter((id: number) => completed.includes(id)).length;
     const progress = Math.round((done / route.courseIds.length) * 100);
 
     return (

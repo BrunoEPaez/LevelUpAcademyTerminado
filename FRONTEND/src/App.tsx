@@ -124,7 +124,7 @@ useEffect(() => {
       setCompleted(res.data.completedCourseIds); 
       setFavorites(res.data.favoriteIds);
     })
-    .catch(err => console.log("Error cargando progreso del usuario"));
+    .catch(() => console.log("Error cargando progreso del usuario"));
   }
 }, [token]);
 
@@ -373,8 +373,6 @@ useEffect(() => {
               </button>
               
               <div className="video-container">
-  {/* Agregamos este console.log temporal para depurar */}
-  {console.log("Datos del curso seleccionado:", selectedCourse)}
   
   <YouTubeEmbed 
     videoId={

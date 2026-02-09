@@ -1,4 +1,4 @@
-import React from 'react';
+
 
 export const NavBar = ({ navigateTo, token, handleLogout, userName }: any) => (
   <nav className="main-nav" style={{ background: '#1a1a2e', borderBottom: '2px solid #4ade80', position: 'sticky', top: 0, zIndex: 100 }}>

@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 import { CourseCard } from '../components/CourseCard';
 
 const CarouselSection = ({ title, courses, favorites, toggleFavorite, navigateTo, setSelectedCourse }: any) => {
