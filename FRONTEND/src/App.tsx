@@ -59,7 +59,7 @@ const [selectedRoute, setSelectedRoute] = useState<any>(() => {
 
   if (token) {
     try {
-      await axios.post('http://levelupacademyterminado.onrender.com/api/progress', 
+      await axios.post('https://levelupacademyterminado.onrender.com/api/progress', 
         { course_id: courseId }, 
         { headers: { Authorization: `Bearer ${token}` } }
       );
