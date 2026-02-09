@@ -19,4 +19,5 @@ EXPOSE 3000
 
 # Comando para iniciar el servidor usando la variable de entorno PORT
 
-CMD ["sh", "-c", "bundle exec rails server -b 0.0.0.0 -p ${PORT:-3000}"]
+# Cambia la última línea (el CMD) por esto:
+CMD ["sh", "-xc", "bundle exec rake db:migrate && bundle exec rake db:seed && bundle exec puma -C config/puma.rb"]
