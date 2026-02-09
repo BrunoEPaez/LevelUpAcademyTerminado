@@ -1,11 +1,21 @@
 # db/seeds.rb
 puts "Iniciando limpieza de base de datos..."
-Course.destroy_all
-Path.destroy_all if defined?(Path)
 
-# Creamos un Path por defecto sin buscar columnas específicas para evitar el error PG::UndefinedColumn
-default_path = Path.create!
+# Usamos SQL puro para limpiar tablas y evitar errores si 'enrollments' no existe en el modelo
+begin
+  ActiveRecord::Base.connection.execute("TRUNCATE courses, paths, lessons CASCADE")
+  puts "Tablas limpiadas con éxito."
+rescue => e
+  puts "Aviso: No se pudo realizar el truncate (quizás las tablas aún no existen): #{e.message}"
+end
 
+# 1. Creamos el Path por defecto
+# Usamos find_or_create_by para evitar duplicados si el script se corre varias veces
+default_path = Path.find_or_create_by!(id: 1) do |p|
+  p.title = "Camino Principal"
+end
+
+# 2. Definición del método para agregar cursos y sus lecciones
 def add_course(category, title, author, url, path_id)
   # Extraer el ID del video de YouTube de forma segura
   begin
@@ -14,7 +24,8 @@ def add_course(category, title, author, url, path_id)
     video_id = "dQw4w9WgXcQ" # Video por defecto si falla la URL
   end
 
-  Course.create!(
+  # Crear el curso
+  course = Course.create!(
     title: title,
     description: "Curso completo de #{title} dictado por #{author}. Disponible en YouTube.",
     thumbnail_url: "https://img.youtube.com/vi/#{video_id}/maxresdefault.jpg",
@@ -22,6 +33,15 @@ def add_course(category, title, author, url, path_id)
     category: category,
     instructor: author,
     path_id: path_id
+  )
+
+  # IMPORTANTE: Crear la lección vinculada. 
+  # Esto arregla el Error 500 en /api/progress y permite que cada curso tenga su video.
+  Lesson.create!(
+    course_id: course.id,
+    youtube_id: video_id,
+    title: "Clase Completa: #{title}",
+    position: 1
   )
 end
 
@@ -163,9 +183,9 @@ add_course('Cloud', 'Google Ads (Completo)', 'soesve', 'https://www.youtube.com/
 # --- ENGLISH ---
 add_course('English', 'Curso Inglés Rápido y Fácil', 'Adrián Sáenz', 'https://www.youtube.com/watch?v=w-ixdGvrixI', default_path.id)
 
-# --- CATEGORIA EXTRA: DISEÑO Y VIDEOJUEGOS (Podemos ponerlos en Herramientas o Desarrollo Web) ---
+# --- CATEGORIA EXTRA ---
 add_course('Herramientas', 'AFFINITY', 'Yoney Gallardo', 'https://www.youtube.com/watch?v=fW4Xwh6POec', default_path.id)
 add_course('Herramientas', 'VEGAS PRO 23', 'Yoney Gallardo', 'https://www.youtube.com/watch?v=FhpoizYeZps', default_path.id)
 add_course('Fundamentos', 'Diseño de Videojuegos', 'Ingennus', 'https://www.youtube.com/watch?v=dOpvnqcsN4k', default_path.id)
 
-puts "¡Proceso finalizado! Se han cargado #{Course.count} cursos."
+puts "¡Proceso finalizado! Se han cargado #{Course.count} cursos y sus lecciones."
