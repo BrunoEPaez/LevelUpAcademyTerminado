@@ -63,8 +63,8 @@ const [selectedRoute, setSelectedRoute] = useState<any>(() => {
         { course_id: courseId }, 
         { headers: { Authorization: `Bearer ${token}` } }
       );
-    } catch (err) {
-      console.error("No se pudo guardar el progreso en el servidor", err);
+    } catch {
+      console.error("No se pudo guardar el progreso en el servidor");
     }
   }
 };
@@ -77,8 +77,8 @@ const handleSelectCourse = async (course: any) => {
     setSelectedCourse(res.data);
     localStorage.setItem('selectedCourse', JSON.stringify(res.data));
     navigateTo('course-detail');
-  } catch (err) {
-    console.error("Error cargando detalles", err);
+  } catch {
+    console.error("Error cargando detalles");
   }
 };
 useEffect(() => {
@@ -264,8 +264,8 @@ useEffect(() => {
         { course_id: course.id, action_type: 'favorite' }, // Enviamos action_type para que el backend sepa qué hacer
         { headers: { Authorization: `Bearer ${token}` } }
       );
-    } catch (err) {
-      console.error("Error al guardar favorito", err);
+    } catch () {
+      console.error("Error al guardar favorito");
     }
   };
 
@@ -275,7 +275,7 @@ useEffect(() => {
     return matchesText && matchesCat;
   });
 
-  const downloadPDF = async (courseTitle: string, certId: string) => {
+  const downloadPDF = async (courseTitle: string) => {
     const element = document.getElementById('diploma-to-print');
     if (!element) {
       alert("Por favor, abre tu Dashboard primero para cargar la plantilla de certificados.");

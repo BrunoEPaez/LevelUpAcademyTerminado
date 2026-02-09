@@ -1,25 +1,49 @@
 import React, { useEffect, useState } from 'react';
 import { CourseCard } from '../components/CourseCard';
 
-export const CoursesPage: React.FC = () => {
-  const [courses, setCourses] = useState([]);
-  const [loading, setLoading] = useState(true);
+// 1. Definimos la interfaz para que TypeScript no de error al recibir props de App.tsx
+interface CoursesPageProps {
+  courses?: any[];           // El ? significa que es opcional
+  favorites: number[];
+  toggleFavorite: (e: React.MouseEvent, course: any) => void;
+  navigateTo: (view: string) => void;
+  setSelectedCourse: (course: any) => void;
+}
+
+// 2. Aplicamos la interfaz al componente
+export const CoursesPage: React.FC<CoursesPageProps> = ({ 
+  courses: initialCourses, 
+  favorites, 
+  toggleFavorite, 
+  navigateTo, 
+  setSelectedCourse 
+}) => {
+  const [courses, setCourses] = useState<any[]>(initialCourses || []);
+  const [loading, setLoading] = useState(!initialCourses || initialCourses.length === 0);
 
   useEffect(() => {
-    // IMPORTANTE: Asegúrate de que tu Rails esté corriendo en el puerto 3000
-    fetch('https://levelupacademyterminado.onrender.com/api/courses')
-      .then((res) => res.json())
-      .then((data) => {
-        setCourses(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Error conectando con Rails:", err);
-        setLoading(false);
-      });
-  }, []);
+    // Solo hace el fetch si no vienen cursos desde las props
+    if (!initialCourses || initialCourses.length === 0) {
+      fetch('https://levelupacademyterminado.onrender.com/api/courses')
+        .then((res) => res.json())
+        .then((data) => {
+          setCourses(data);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error("Error conectando con Rails:", err);
+          setLoading(false);
+        });
+    }
+  }, [initialCourses]);
 
-  if (loading) return <div style={{color: 'white', textAlign: 'center', marginTop: '100px'}}>Cargando cursos de Dalto...</div>;
+  if (loading) {
+    return (
+      <div style={{ color: 'white', textAlign: 'center', marginTop: '100px' }}>
+        Cargando cursos de Dalto...
+      </div>
+    );
+  }
 
   return (
     <div style={{ backgroundColor: '#0f172a', minHeight: '100vh', padding: '40px' }}>
@@ -39,9 +63,13 @@ export const CoursesPage: React.FC = () => {
           <CourseCard 
             key={course.id} 
             course={course} 
-            onClick={() => console.log("Click en:", course.title)}
-            onFavorite={() => console.log("Like en:", course.id)}
-            isFavorite={false}
+            // Usamos las funciones reales que vienen de App.tsx
+            onClick={() => {
+              setSelectedCourse(course);
+              navigateTo('course-detail');
+            }}
+            onFavorite={(e) => toggleFavorite(e, course)}
+            isFavorite={favorites.includes(course.id)}
           />
         ))}
       </div>
