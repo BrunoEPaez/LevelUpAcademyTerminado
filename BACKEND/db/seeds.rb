@@ -41,11 +41,12 @@ def add_course(category, title, author, url, path_id)
 
   # CREAR LA LECCIÓN (Esto es lo que arregla tus rutas)
   # Sin una lección, la ruta /courses/:id/lessons/:id no tiene nada que mostrar
+  # CREAR LA LECCIÓN
   Lesson.create!(
     course_id: course.id,
     youtube_id: video_id,
     title: "Clase Completa: #{title}",
-    description: "Contenido audiovisual del curso #{title}.",
+    # BORRAMOS LA LÍNEA DE DESCRIPTION AQUÍ
     position: 1
   )
 end
